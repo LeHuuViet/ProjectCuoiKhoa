@@ -1,0 +1,68 @@
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    font-size: 2rem;
+    background-color: #323259;
+    height: 76px;
+    padding: 20px;
+    width: -webkit-fill-available;
+    box-shadow: 0 0.5rem 1rem 0 #1a1f33;
+    z-index: 10;
+    position: relative;
+}
+
+.navbar-user {
+    position: relative;
+    padding: 10px;
+    padding-left: 20px;
+    opacity: 70%;
+}
+
+.navbar-user:hover {
+    opacity: 100%;
+}
+
+.navbar-user:hover .navbar-user-menu {
+    display: block !important;
+    cursor: pointer;
+    animation: fadeIn ease-in 0.4s;
+}
+
+
+.navbar-button {
+    text-decoration: none;
+    color: white;
+}
+
+
+
+.navbar-user-menu {
+    position: absolute;
+    right: 0;
+    height: 100px;
+    width: auto;
+    margin: 0;
+    padding: 0; 
+    width: 400px;
+    height: 100px;
+    background-color: red;
+    border-radius: 0.5rem;
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 100%;
+    } to {
+        opacity: 0%;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0%;
+    } to {
+        opacity: 100%;
+    }
+}
