@@ -8,6 +8,7 @@ import {
   AccordionIcon,
   Box,
 } from "@chakra-ui/react";
+import { Link } from "react-router-dom"
 
 function SideNavigationMenu() {
   return (
@@ -85,9 +86,9 @@ function SideNavigationMenu() {
           <AccordionPanel pb={4}>
             <ul className="sidebar-items">
               <li>
-                <a href="">
+                <Link to="/products">
                   Products
-                </a>
+                </Link>
               </li>
               {/* <li>
                 <a href="">
@@ -137,9 +138,9 @@ function SideNavigationMenu() {
           <AccordionPanel pb={4}>
             <ul className="sidebar-items">
               <li>
-                <a href="">
+                <Link to="/users">
                   User lists
-                </a>
+                </Link>
               </li>
             </ul>
           </AccordionPanel>

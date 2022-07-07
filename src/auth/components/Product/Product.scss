@@ -1,7 +1,6 @@
 .products {
-    padding: 24px;
-    width: calc(100% - 256px)
-}
+    width: 100%;
+
 
 .products-title {
     color: white;
@@ -98,3 +97,72 @@ label {
     background: #1B1B38;
 }
 
+.product-delete {
+    height: 38px;
+    width: 38px;
+    background-color: #b18aff;
+    padding: 0;
+    border: 0;
+    border-radius: 0.25rem;
+    cursor: pointer;
+}
+svg {
+    width: 16px;
+    height: 18px;
+}
+.pagination {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    gap: 5px;
+    background-color: #323259;
+    height: auto;
+    padding: 30px;
+}
+
+.pagination a {
+    text-decoration: none;
+    color: white;
+    border: 1px solid black;
+}
+
+.pagination .page-num {
+    padding: 8px 15px;
+    cursor: pointer;
+    background-repeat: 3px;
+    font-weight: 400;
+}
+
+.pagination li a {
+    padding: 8px 15px;
+    cursor: pointer;
+    background-repeat: 3px;
+    font-weight: 400;
+}
+
+.pagination .page-num:hover {
+    background: #B18AFF;
+    color: white;
+}
+
+.pagination .active {
+    background: #B18AFF;
+    color: white;
+}
+
+.pagination-bar {
+    display: flex;
+    align-items: center;
+    background-color: var(--background-color);
+}
+
+.pagination-bar .pagiSelect {
+    color: white;
+    background: #B18AFF;
+    margin: 0 10px;
+    border: 1px;
+    padding: 3px 10px;
+}
+
+}

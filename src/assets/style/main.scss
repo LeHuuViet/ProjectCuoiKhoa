@@ -1,0 +1,18 @@
+@import './color.scss';
+@import './table.scss';
+
+:root {
+    --sidebar-width: 256px;
+    --header-height:76px;
+}
+
+#root {
+    padding-left: var(--sidebar-width);
+}
+
+.main-container {
+    display: flex;
+    padding: 1rem;
+    padding-top: calc(var(--header-height) + 1rem);
+    background-color: #1B1B38;
+}

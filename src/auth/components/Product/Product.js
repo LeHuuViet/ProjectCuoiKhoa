@@ -1,92 +1,96 @@
+import { faTruckField } from "@fortawesome/free-solid-svg-icons";
 import React, { useEffect, useState, useDispatch } from "react";
-import "./Product.scss";
-import axios from "axios";
-import { deleteUser } from "../../../action/action";
+import DataTable from "react-data-table-component";
 import ReactPaginate from "react-paginate";
+import "./Product.scss";
+import moment from "moment";
 
 function Product() {
-  const [CheckedAll, setCheckedAll] = useState(true);
-  const [ProductList, setProductList] = useState([]);
-  const [Page, setPage] = useState(1);
+  const [checkAll, setCheckAll] = useState(false);
+  const [data, setData] = useState([]);
+  const [page, setPage] = useState(1);
+  const [pageCount, setPageCount] = useState(0)
+  const [itemsPerPage, setItemsPerPage] = useState(10)
+  const [totalItems, setTotalItems] = useState(0);
 
-  const [pageCount, setPageCount] = useState(+0);
-  const [totalItem, setTotalItem] = useState(0);
-  const [itemsPerPage, setItemsPerPage] = useState(25);
-
-  const dispatch = useDispatch()
-
-
+  
   useEffect(() => {
-      (async () => {
-          const res = await axios.post("https://api.gearfocus.div4.pgtest.co/api/products/list",
-              `{
-      "page":${Page},
-      "count":${itemsPerPage},
-      "search":"",
-      "category":"0",
-      "stock_status":"all",
-      "availability":"all",
-      "vendor":"",
-      "sort":"name",
-      "order_by":"ASC",
-      "search_type":""}`,
-              {
-                  headers: {
-                      Authorization: '9.5a8eefea2a1299f87e8e1a74994827840debf897a605c603444091fa519da275',
-                  }
-              });
-          setProductList(res.data.data)
-          setTotalItem(+res.data.recordsFiltered)
-          // console.log('setProductList', ProductList)
-          // console.log('res', typeof (+res.data.recordsFiltered))
-          // console.log('res', +res.data.recordsFiltered)
-          // console.log('totalItem', totalItem)
-          // console.log('itemsPerPage', itemsPerPage)
-          const pc = +res.data.recordsFiltered / itemsPerPage
-          setPageCount(Math.round(pc))
-          // console.log(pageCount);
-      })()
-      console.log('setProductList', ProductList)
-  }, [Page, itemsPerPage])
+    const datas = fetch('https://api.gearfocus.div4.pgtest.co/api/products/list')
+    .then(response => response.json())
+    .then(data => setData(data));
+    setTotalItems(data.recordsFiltered)
+    const pc = data.recordsFiltered / itemsPerPage;
+    setPageCount(Math.round(pc))
+  }, [page, itemsPerPage]);
 
-  const handleDelete = (id) => {
-      console.log('ng dung bi xoa la', id)
-      dispatch(deleteUser(id));
+  const handleChangePage = (e) => {
+    setPage(e.selected + 1);
   }
-
-  const handlePageClick = (event) => {
-      setPage(event.selected + 1);
-      console.log(event.selected);
-  };
 
   const handleCheckAll = () => {
-      // Lấy danh sách checkbox
-      var checkboxes = document.getElementsByName('name[]');
-
-      // Lặp và thiết lập checked
-      for (var i = 0; i < checkboxes.length; i++) {
-          checkboxes[i].checked = true;
-      }
-      setCheckedAll(false);
+    var checkboxes = document.getElementsByName('checkbox');
+    for (var i = 0; i < checkboxes.length; i++) {
+      checkboxes[i].checked = true;
+    }
+    setCheckAll(false)
   }
 
-  const handleCheckNone = () => {
-      // Lấy danh sách checkbox
-      var checkboxes = document.getElementsByName('name[]');
-
-      // Lặp và thiết lập Uncheck
-      for (var i = 0; i < checkboxes.length; i++) {
-          checkboxes[i].checked = false;
-      }
-      setCheckedAll(true);
+  const handleUnCheckAll = () => {
+    var checkboxes = document.getElementsByName('checkbox')
+    for (var i = 0; i < checkboxes.length; i++) {
+      checkboxes[i].checked = false;
+    }
+    setCheckAll(true)
   }
 
-  const handle = (CheckedAll) => {
-      if (CheckedAll === true)
-          handleCheckAll()
-      else
-          handleCheckNone()
-  }
+  const handleCheckAndUnCheck = (checkAll) => {
+    if (checkAll === true) handleCheckAll();
+    else handleUnCheckAll();
+  } 
+
+
+  const columns = [
+    {
+      name: <input name='checkbox' type={'checkbox'} onClick={() => handleCheckAndUnCheck(checkAll)}/>,
+      selector: row => <input name='checkbox' type={'checkbox'}/>
+    },
+    {
+      name: 'SKU',
+      selector: row => row.sku
+    },
+    {
+      name: 'Name',
+      selector: row => <a href='' style={{width: '300px'}}>{row.name}</a>
+    },
+    {
+      name: 'Category',
+      selector: row => row.category
+    },
+    {
+      name: 'Price',
+      selector: row => <input value={row.price}/>
+
+    },
+    {
+      name: 'Instock',
+      selector: row => <input value={row.amount}/>
+    },
+    {
+      name: 'Vendor',
+      selector: row => <a href="">{row.vendor}</a>
+    },
+    {
+      name: 'Arrival Date',
+      selector: row => moment(row.arrivalDate).format('ll')
+    },
+    {
+      name: '',
+      selector: row => <button className="product-delete">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M135.2 17.69C140.6 6.848 151.7 0 163.8 0H284.2C296.3 0 307.4 6.848 312.8 17.69L320 32H416C433.7 32 448 46.33 448 64C448 81.67 433.7 96 416 96H32C14.33 96 0 81.67 0 64C0 46.33 14.33 32 32 32H128L135.2 17.69zM394.8 466.1C393.2 492.3 372.3 512 346.9 512H101.1C75.75 512 54.77 492.3 53.19 466.1L31.1 128H416L394.8 466.1z"/></svg>
+      </button>
+    },
+    
+  ]
 
   return (
     <div className="products">
@@ -130,13 +134,16 @@ function Product() {
                 <label>Search in:</label>
                 <ul style={{padding: '0px'}}>
                   <li>
-                    <input type={"checkbox"} />
+                    <input type={"checkbox"}/>
+                    <label>Name</label>
                   </li>
                   <li>
                     <input type={"checkbox"} />
+                    <label>SKU</label>
                   </li>
                   <li>
                     <input type={"checkbox"} />
+                    <label>Full Description</label>
                   </li>
                 </ul>
               </li>
@@ -160,49 +167,21 @@ function Product() {
             <button className='products-search-button'>Add product</button>
           </div>
           <div className="products-table">
-          <table className="table">
-            <thead>
-                <tr>
-                    <th><input type={'checkbox'}/></th>
-                    <th>SKU</th>
-                    <th>Name</th>
-                    <th>Category</th>
-                    <th>Price</th>
-                    <th>In stock</th>
-                    <th>Vendor</th>
-                    <th>Arrival Date</th>
-                    <th> </th>
-                </tr>
-            </thead>
-            <tbody>
-                    {ProductList && ProductList.length > 0 && ProductList.map((item, index) => {
-                        return (
-                            <tr key={`products-${index}`}>
-                                <th><input type="checkbox" name='name[]' id='check_all'></input></th>
-                                <td>{item.sku}</td>
-                                <td><a className='link' title={`${item.name}`}>{item.name}</a></td>
-                                <td>{item.category}</td>
-                                <td>${item.price.slice(0, item.price.indexOf('.', [-1]) + 3)}</td>
-                                <td>{item.amount}</td>
-                                <td><a className='link' title={`${item.vendor}`}>{item.vendor}</a></td>
-                                <td>{item.arrivalDate != 0 ? new Date(+item.arrivalDate * 1000).toLocaleString("en-ZA", { month: "short", day: "numeric", year: "numeric" }) : '--'}</td>
-                                <td>
-                                    <button className='btn btn-danger' onClick={() => handleDelete(item.id)}>Delete</button>
-                                </td>
-                            </tr>
-                        )
-                    })}
-                </tbody>
-            </table>
+            <DataTable 
+            keyField="id"
+            columns={columns}
+            data={data.data}
+            pagination={true}
+              />
             <div className="pagination-bar">
                 <ReactPaginate
                     breakLabel="..."
-                    nextLabel=">>"
-                    onPageChange={handlePageClick}
-                    pageRangeDisplayed={4}
+                    nextLabel="next"
+                    onPageChange={handleChangePage}
+                    pageRangeDisplayed={2}
                     marginPagesDisplayed={1}
                     pageCount={pageCount}
-                    previousLabel="<<"
+                    previousLabel="previous"
                     renderOnZeroPageCount={null}
                     containerClassName="pagination"
                     pageLinkClassName="page-num"
@@ -210,7 +189,7 @@ function Product() {
                     nextLinkClassName="page-num"
                     activeLinkClassName='active'
                 />
-                <div>{totalItem} items</div>
+                <div>{totalItems} items</div>
                 <select className="pagiSelect" onChange={(e) => setItemsPerPage(e.target.value)} defaultValue={25}>
                     <option value="10">10</option>
                     <option value="25">25</option>
@@ -218,7 +197,7 @@ function Product() {
                     <option value="75">75</option>
                     <option value="100">100</option>
                 </select>
-              </div>
+            </div>
           </div>
           </div>
   )};

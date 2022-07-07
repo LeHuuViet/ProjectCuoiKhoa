@@ -1,0 +1,25 @@
+.rdt_Table {
+    background-color: var(--background-color)!important;
+    .rdt_TableHeadRow  {
+        background-color: var(--background-color)!important;
+    }
+    .rdt_TableRow {
+        background-color: var(--background-color)!important;
+    }
+    .rdt_TableCell, .rdt_TableCol {
+        color: white
+    }
+    .rdt_TableCol {
+        font-size: 1rem;
+        font-weight: 500;
+    }
+    .rdt_TableCell {
+        font-size: 0.9rem;
+        font-weight: 400;
+    }
+}
+.rdt_Pagination {
+    background-color: var(--background-color)!important;
+    color: white;
+}
+
