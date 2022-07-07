@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { validateEmail, validatePassword } from "../../validate";
 import { MoonLoader } from "react-spinners";
-import NavBar from "../Navbar/NavBar";
+import Header from "../Header/Header"
 import './LoginForm.scss'
 import SideNavigationMenu from "../SideNavigationMenu/SideNavigationMenu";
 import Product from "../Product/Product";
@@ -70,7 +70,7 @@ const LoginForm = () => {
   if (isLogIn) {
     return (
       <>
-            <NavBar />
+            <Header />
             <div className="product-menu">
             <SideNavigationMenu />
             <Product />

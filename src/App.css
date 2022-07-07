@@ -6,3 +6,7 @@
 svg {
   fill: white
 }
+
+.d-flex {
+  display: flex;
+}

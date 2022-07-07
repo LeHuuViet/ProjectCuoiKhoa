@@ -93,7 +93,7 @@ function Product() {
   ]
 
   return (
-    <div className="products">
+    <div className="Products">
       <div>
         <h2 className="products-title">Products</h2>
         <div className="product-search-form">
@@ -176,12 +176,12 @@ function Product() {
             <div className="pagination-bar">
                 <ReactPaginate
                     breakLabel="..."
-                    nextLabel="next"
+                    nextLabel=">>"
                     onPageChange={handleChangePage}
                     pageRangeDisplayed={2}
                     marginPagesDisplayed={1}
                     pageCount={pageCount}
-                    previousLabel="previous"
+                    previousLabel="<<"
                     renderOnZeroPageCount={null}
                     containerClassName="pagination"
                     pageLinkClassName="page-num"

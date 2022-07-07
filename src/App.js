@@ -1,21 +1,20 @@
 import "./App.css";
-import NavBar from "./auth/components/Navbar/NavBar";
+import Header from "./auth/components/Header/Header"
 import Product from "./auth/components/Product/Product";
 import LoginPage from "./auth/pages/LoginPage";
 import SideNavigationMenu from "./auth/components/SideNavigationMenu/SideNavigationMenu";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
-
-const User = () => <h1>User</h1>;
+import UserList from "./auth/components/UserList/UserList";
 
 function App() {
   return (
     <BrowserRouter>
-      <NavBar />
+      <Header />
       <SideNavigationMenu />
       <div className="main-container">
         <Routes>
           <Route path="/products" element={<Product />} />
-          <Route path="/users" element={<User />} />
+          <Route path="/users" element={<UserList />} />
         </Routes>
       </div>
     </BrowserRouter>
