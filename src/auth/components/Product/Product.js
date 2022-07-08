@@ -14,7 +14,14 @@ function Product() {
 
   useEffect(() => {
     const datas = fetch(
-      "https://api.gearfocus.div4.pgtest.co/api/products/list", {method: 'POST', headers: {Authorization: '9.5a8eefea2a1299f87e8e1a74994827840debf897a605c603444091fa519da275'}}
+      "https://api.gearfocus.div4.pgtest.co/api/products/list",
+      {
+        method: "POST",
+        headers: {
+          Authorization:
+            "9.5a8eefea2a1299f87e8e1a74994827840debf897a605c603444091fa519da275",
+        },
+      }
     )
       .then((response) => response.json())
       .then((data) => setData(data));
@@ -58,47 +65,59 @@ function Product() {
         />
       ),
       selector: (row) => <input name="checkbox" type={"checkbox"} />,
-      width: '50px'
+      width: "50px",
     },
     {
       name: "SKU",
       selector: (row) => row.sku,
-      width: '150px'
+      width: "150px",
+      sortable: true,
     },
     {
       name: "Name",
       selector: (row) => (
-        <a href="" style={{color: '#007bff'}}>
+        <a href="" style={{ color: "#007bff" }}>
           {row.name}
         </a>
       ),
-      width: '300px'
+      width: "300px",
+
+      sortable: true,
     },
     {
       name: "Category",
       selector: (row) => row.category,
-      width: '200px'
-
+      width: "250px",
     },
     {
       name: "Price",
-      selector: (row) => <input value={row.price} />,
-      width: '100px'
+      selector: (row) => <input value={(row.price)}/>,
+      width: "100px",
+
+      sortable: true,
     },
     {
       name: "Instock",
       selector: (row) => <input value={row.amount} />,
-      width: '100px'
+      width: "100px",
+      sortable: true,
     },
     {
       name: "Vendor",
-      selector: (row) => <a href="" style={{color: '#007bff'}}>{row.vendor}</a>,
-      width: '200px'
+      selector: (row) => (
+        <a href="" style={{ color: "#007bff" }}>
+          {row.vendor}
+        </a>
+      ),
+      width: "300px",
+      sortable: true,
     },
     {
       name: "Arrival Date",
-      selector: (row) => moment.unix(Number.parseInt(row.arrivalDate)).format("ll"),
-      width: '200px'
+      selector: (row) =>
+        moment.unix(Number.parseInt(row.arrivalDate)).format("ll"),
+      width: "200px",
+      sortable: true,
     },
     {
       name: "",

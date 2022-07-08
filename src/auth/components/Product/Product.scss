@@ -1,26 +1,27 @@
 .Products {
-    width: 100%;
+  width: 100%;
 
-
-.products-title {
+  .products-title {
     color: white;
     font-size: 2rem;
     font-weight: 400;
     line-height: 2.5rem;
     margin-bottom: 16px;
-}
+    margin-top: 0;
+    padding-top: 36px;
+  }
 
-.product-search-form {
+  .product-search-form {
     background-color: #323259;
     margin-bottom: 40px;
-}
+  }
 
-.products-table {
+  .products-table {
     margin-top: 24px;
-}
+  }
 
-.products-select {
-    font-size: .9375rem;
+  .products-select {
+    font-size: 0.9375rem;
     font-weight: 600;
     line-height: 1.5rem;
     text-align: left;
@@ -35,11 +36,10 @@
     height: 40px;
     padding: 0.4375rem 2.2rem 0.4375rem 1.125rem;
     font-family: inherit;
-}
+  }
 
-
-input.products-search-input {
-    font-size: .9375rem;
+  input.products-search-input {
+    font-size: 0.9375rem;
     font-weight: 400;
     line-height: 1.5rem;
     padding: 0.4375rem 1rem;
@@ -50,9 +50,9 @@ input.products-search-input {
     border-style: solid;
     border-width: 1px;
     height: 40px;
-}
+  }
 
-button.products-search-button {
+  button.products-search-button {
     height: 40px;
     cursor: pointer;
     color: #fff;
@@ -67,34 +67,31 @@ button.products-search-button {
     padding: 0.375rem 0.75rem;
     line-height: 1.5;
     border-radius: 0.25rem;
-}
+  }
 
-
-
-
-ul {
+  ul {
     padding: 20px;
     margin: 0;
-}
+  }
 
-li {
+  li {
     list-style: none;
-}
+  }
 
-label {
+  label {
     color: white;
     margin-right: 15px;
     margin-top: 7px;
-    font-size: .9375rem;
+    font-size: 0.9375rem;
     font-weight: 400;
-}
+  }
 
-.line-1 {
+  .line-1 {
     height: 1px;
-    background: #1B1B38;
-}
+    background: #1b1b38;
+  }
 
-.product-delete {
+  .product-delete {
     height: 38px;
     width: 38px;
     background-color: #b18aff;
@@ -102,12 +99,12 @@ label {
     border: 0;
     border-radius: 0.25rem;
     cursor: pointer;
-}
-svg {
+  }
+  svg {
     width: 16px;
     height: 18px;
-}
-.pagination {
+  }
+  .pagination {
     list-style: none;
     display: flex;
     justify-content: center;
@@ -116,50 +113,49 @@ svg {
     background-color: #323259;
     height: auto;
     padding: 30px;
-}
+  }
 
-.pagination a {
+  .pagination a {
     text-decoration: none;
     color: white;
     border: 1px solid black;
-}
+  }
 
-.pagination .page-num {
+  .pagination .page-num {
     padding: 8px 15px;
     cursor: pointer;
     background-repeat: 3px;
     font-weight: 400;
-}
+  }
 
-.pagination li a {
+  .pagination li a {
     padding: 8px 15px;
     cursor: pointer;
     background-repeat: 3px;
     font-weight: 400;
-}
+  }
 
-.pagination .page-num:hover {
-    background: #B18AFF;
+  .pagination .page-num:hover {
+    background: #b18aff;
     color: white;
-}
+  }
 
-.pagination .active {
-    background: #B18AFF;
+  .pagination .active {
+    background: #b18aff;
     color: white;
-}
+  }
 
-.pagination-bar {
+  .pagination-bar {
     display: flex;
     align-items: center;
     background-color: var(--background-color);
-}
+  }
 
-.pagination-bar .pagiSelect {
+  .pagination-bar .pagiSelect {
     color: white;
-    background: #B18AFF;
+    background: #b18aff;
     margin: 0 10px;
     border: 1px;
     padding: 3px 10px;
-}
-
+  }
 }
