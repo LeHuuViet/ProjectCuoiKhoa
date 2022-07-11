@@ -5,6 +5,7 @@ import moment from "moment";
 
 function UserList() {
   const [data, setData] = useState([]);
+  const [totalItems, setTotalItems] = useState(0)
   useEffect(() => {
     const data = fetch(
       "https://api.gearfocus.div4.pgtest.co/apiAdmin/users/list",
@@ -14,6 +15,27 @@ function UserList() {
           Authorization:
             "9.5a8eefea2a1299f87e8e1a74994827840debf897a605c603444091fa519da275",
         },
+        body: JSON.stringify({
+          "page":1,
+          "count":25,
+          "search":"",
+          "memberships":[
+          ],
+          "types":[
+          ],
+          "status":[
+          ],
+          "country":"",
+          "state":"",
+          "address":"",
+          "phone":"",
+          "date_type":"R",
+          "date_range":[
+          ],
+          "sort":"last_login",
+          "order_by":"DESC",
+          "tz":7
+         })
       }
     )
       .then((response) => response.json())

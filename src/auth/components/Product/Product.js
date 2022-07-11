@@ -5,23 +5,58 @@ import "./Product.scss";
 import moment from "moment";
 
 function Product() {
+  const initData = {
+    search: '',
+    category: '0',
+    stockStatus: 'all',
+    searchIn: '',
+    availability: '',
+  }
+
   const [checkAll, setCheckAll] = useState(false);
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
-  const [pageCount, setPageCount] = useState(0);
+  const [pageCount, setPageCount] = useState(25);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalItems, setTotalItems] = useState(0);
+  const [search, setSearch] = useState('')
+  const [category, setCategory] = useState('0')
+  const [stockStatus, setStockStatus] = useState('all')
+  const [searchIn, setSearchIn] = useState('')
+  const [availability, setAvailability] = useState('')
+  const [state, setState] = useState(initData)
 
   useEffect(() => {
     const datas = fetch(
-      "https://api.gearfocus.div4.pgtest.co/api/products/list", {method: 'POST', headers: {Authorization: '9.5a8eefea2a1299f87e8e1a74994827840debf897a605c603444091fa519da275'}}
+      "https://api.gearfocus.div4.pgtest.co/api/products/list", {method: 'POST', headers: {Authorization: '9.5a8eefea2a1299f87e8e1a74994827840debf897a605c603444091fa519da275'}, body: JSON.stringify({
+        "page":page,
+        "count":itemsPerPage,
+        "search":"",
+        "memberships":[
+        ],
+        "types":[
+        ],
+        "status":[
+        ],
+        "country":"",
+        "state":"",
+        "address":"",
+        "phone":"",
+        "date_type":"R",
+        "date_range":[
+        ],
+        "sort":"last_login",
+        "order_by":"DESC",
+        "tz":7
+       })}
     )
       .then((response) => response.json())
       .then((data) => setData(data));
+      console.log(data.recordsTotal)
     setTotalItems(data.recordsFiltered);
     const pc = data.recordsFiltered / itemsPerPage;
     setPageCount(Math.round(pc));
-  }, [page, itemsPerPage]);
+  }, [page, itemsPerPage, state]);
 
   const handleChangePage = (e) => {
     setPage(e.selected + 1);
@@ -198,7 +233,6 @@ function Product() {
           keyField="id"
           columns={columns}
           data={data.data}
-          pagination={true}
         />
         <div className="pagination-bar">
           <ReactPaginate
@@ -206,7 +240,7 @@ function Product() {
             nextLabel=">>"
             onPageChange={handleChangePage}
             pageRangeDisplayed={2}
-            marginPagesDisplayed={1}
+            marginPagesDisplayed={2}
             pageCount={pageCount}
             previousLabel="<<"
             renderOnZeroPageCount={null}
@@ -216,11 +250,11 @@ function Product() {
             nextLinkClassName="page-num"
             activeLinkClassName="active"
           />
-          <div>{totalItems} items</div>
+          <div style={{color: 'white'}}>{totalItems} items</div>
           <select
             className="pagiSelect"
             onChange={(e) => setItemsPerPage(e.target.value)}
-            defaultValue={25}
+            defaultValue={10}
           >
             <option value="10">10</option>
             <option value="25">25</option>
