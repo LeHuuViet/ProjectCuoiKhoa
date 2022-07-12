@@ -13,8 +13,8 @@ function App() {
       <SideNavigationMenu />
       <div className="main-container">
         <Routes>
-          <Route path="/products" element={<Product />} />
-          <Route path="/users" element={<UserList />} />
+          <Route path="/pages/products/manage-product" element={<Product />} />
+          <Route path="/pages/products/manage-users" element={<UserList />} />
         </Routes>
       </div>
     </BrowserRouter>

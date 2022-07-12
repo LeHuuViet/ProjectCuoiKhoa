@@ -37,12 +37,13 @@
   }
   .line-1 {
     height: 1px;
-    background: #1B1B38;
+    background: #1b1b38;
   }
-  .userlist-select, .userlist-search-input {
+  .userlist-select,
+  .userlist-search-input {
     border-radius: 0.25rem;
-    font-size: .9375rem;
-    font-weight: 600;
+    font-size: 0.9375rem;
+    font-weight: 400;
     line-height: 1.5rem;
     padding: 0.4375rem 1rem;
     background-color: #252547;
