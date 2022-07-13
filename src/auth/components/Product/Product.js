@@ -1,17 +1,20 @@
+/* eslint-disable no-unused-expressions */
 import React, { useEffect, useState, useDispatch } from "react";
 import DataTable from "react-data-table-component";
 import ReactPaginate from "react-paginate";
 import "./Product.scss";
 import moment from "moment";
+import axios from "axios";
+import { Link } from "react-router-dom"
 
-function Product() {
+const Product=()=> {
   const initData = {
-    search: '',
-    category: '0',
-    stockStatus: 'all',
-    searchIn: '',
-    availability: '',
-  }
+    search: "",
+    category: "0",
+    stockStatus: "all",
+    searchIn: "",
+    availability: "",
+  };
 
   const [checkAll, setCheckAll] = useState(false);
   const [data, setData] = useState([]);
@@ -19,54 +22,44 @@ function Product() {
   const [pageCount, setPageCount] = useState(25);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalItems, setTotalItems] = useState(0);
-  const [search, setSearch] = useState('')
-  const [category, setCategory] = useState('0')
-  const [stockStatus, setStockStatus] = useState('all')
-  const [searchIn, setSearchIn] = useState('')
-  const [availability, setAvailability] = useState('')
-  const [state, setState] = useState(initData)
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("0");
+  const [stockStatus, setStockStatus] = useState("all");
+  const [searchIn, setSearchIn] = useState("");
+  const [availability, setAvailability] = useState("all");
+  const [state, setState] = useState(initData);
 
-  useEffect(() => {
-    const datas = fetch(
-<<<<<<< HEAD
-      "https://api.gearfocus.div4.pgtest.co/api/products/list", {method: 'POST', headers: {Authorization: '9.5a8eefea2a1299f87e8e1a74994827840debf897a605c603444091fa519da275'}, body: JSON.stringify({
-        "page":page,
-        "count":itemsPerPage,
-        "search":"",
-        "memberships":[
-        ],
-        "types":[
-        ],
-        "status":[
-        ],
-        "country":"",
-        "state":"",
-        "address":"",
-        "phone":"",
-        "date_type":"R",
-        "date_range":[
-        ],
-        "sort":"last_login",
-        "order_by":"DESC",
-        "tz":7
-       })}
-=======
+  const fetchAllProducts = async () => {
+    const datas = await axios.post(
       "https://api.gearfocus.div4.pgtest.co/api/products/list",
       {
-        method: "POST",
+        page: page,
+        count: itemsPerPage,
+        'search': state.search,
+        'category': state.category,
+        'stock_status': state.stockStatus,
+        'availability': state.availability,
+        'vendor': "",
+        'sort': "name",
+        'order_by': "ASC",
+        'search_type': state.searchIn,
+      },
+      {
         headers: {
           Authorization:
             "9.5a8eefea2a1299f87e8e1a74994827840debf897a605c603444091fa519da275",
         },
       }
->>>>>>> cbbdacf124d08c0e2b7a41d72a64ae2c25eeef68
-    )
-      .then((response) => response.json())
-      .then((data) => setData(data));
-      console.log(data.recordsTotal)
-    setTotalItems(data.recordsFiltered);
-    const pc = data.recordsFiltered / itemsPerPage;
-    setPageCount(Math.round(pc));
+    );
+    console.log('search',search)
+    setData(datas.data);
+    setTotalItems(datas.data.recordsFiltered);
+    const itemOffSet = datas.data.recordsFiltered / itemsPerPage;
+    setPageCount(Math.round(itemOffSet));
+  };
+
+  useEffect(() => {
+    fetchAllProducts();
   }, [page, itemsPerPage, state]);
 
   const handleChangePage = (e) => {
@@ -130,7 +123,7 @@ function Product() {
     },
     {
       name: "Price",
-      selector: (row) => <input value={(row.price)}/>,
+      selector: (row) => <input value={row.price} />,
       width: "100px",
 
       sortable: true,
@@ -170,32 +163,69 @@ function Product() {
     },
   ];
 
+  const handleSearch = (e) => {
+    e.preventDefault();
+    const N = document.getElementById("by-title").checked;
+    const S = document.getElementById("by-sku").checked;
+    const F = document.getElementById("by-descr").checked;
+    const searchvendor = document.getElementById("search-vendor").value;
+
+    let X = "";
+    N ? (X = X.concat("name,")) : (X = X.concat(""));
+    S ? (X = X.concat("sku,")) : (X = X.concat(""));
+    F ? (X = X.concat("description,")) : (X = X.concat(""));
+    X = X.slice(0, X.length - 1);
+
+    setState((state) => ({
+      ...state,
+      'Search': search,
+      'Category': category,
+      'Availability': availability,
+      'StockStatus': stockStatus,
+      'searchIn': X,
+    }));
+    // cai nay da co code gi lien quan den phan search dau ma search duoc
+
+  };
+
   return (
     <div className="Products">
       <div>
         <h2 className="products-title">Products</h2>
         <div className="product-search-form">
-          <form className="border">
+          <form className="border" onSubmit={handleSearch}>
             <ul className="products-search-1 d-flex">
               <li style={{ width: "50%", marginRight: "20px" }}>
                 <div>
                   <input
                     className="products-search-input border"
+                    type="text"
                     placeholder="Search keywords"
+                    name="search"
+                    onChange={(e) => setSearch(e.target.value)}
+                    id="search-keywords"
                   />
                 </div>
               </li>
               <li style={{ width: "25%", marginRight: "20px" }}>
                 <div>
-                  <select className="products-select border"></select>
+                  <select
+                    name="category"
+                    id="category"
+                    defaultValue={"Any category"}
+                    onChange={(e) => setCategory(e.target.value)}
+                    className="products-select border"
+                  ></select>
                 </div>
               </li>
               <li style={{ width: "20%", marginRight: "20px" }}>
                 <div>
                   <select
                     className="products-select border"
+                    name="inventory"
                     id="inventory"
-                    defaultValue={"Any stock status"}
+                    defaultValue={"Any inventory"}
+                    onChange={(e) => setStockStatus(e.target.value)}
                   >
                     <option value="all">Any stock status</option>
                     <option value="in">In stock</option>
@@ -206,7 +236,13 @@ function Product() {
               </li>
               <li style={{ width: "5%", marginRight: "20px" }}>
                 <div>
-                  <button className="products-search-button">Search</button>
+                  <button
+                    type="submit"
+                    className="products-search-button"
+                    // onClick={() => handleSearch()}
+                  >
+                    Search
+                  </button>
                 </div>
               </li>
             </ul>
@@ -216,24 +252,27 @@ function Product() {
                 <label>Search in:</label>
                 <ul style={{ padding: "0px" }}>
                   <li>
-                    <input type={"checkbox"} />
-                    <label>Name</label>
+                    <input type={"checkbox"} name="by-title" id="by-title" />
+                    <label htmlFor="by-title">Name</label>
                   </li>
                   <li>
-                    <input type={"checkbox"} />
-                    <label>SKU</label>
+                    <input type={"checkbox"} name="by-sku" id="by-sku" />
+                    <label htmlFor="by-sku">SKU</label>
                   </li>
                   <li>
-                    <input type={"checkbox"} />
-                    <label>Full Description</label>
+                    <input type={"checkbox"} name="by-descr" id="by-descr" />
+                    <label htmlFor="by-descr">Full Description</label>
                   </li>
                 </ul>
               </li>
               <li className="d-flex" style={{ marginRight: "40px" }}>
                 <label>Availability</label>
                 <select
-                  className="products-select border"
+                  name="availability"
+                  id="availability"
                   defaultValue={"Any availability status"}
+                  onChange={(e) => setAvailability(e.target.value)}
+                  className="products-select border"
                 >
                   <option value="all">Any availability status</option>
                   <option value="1">Only enabled</option>
@@ -242,21 +281,23 @@ function Product() {
               </li>
               <li className="d-flex" style={{ marginRight: "40px" }}>
                 <label>Vendor</label>
-                <input className="products-search-input border" />
+                <input
+                  type="text"
+                  id="search-vendor"
+                  className="products-search-input border"
+                />
               </li>
             </ul>
           </form>
         </div>
       </div>
       <div>
+        <Link to="/pages/add-products">
         <button className="products-search-button">Add product</button>
+        </Link>
       </div>
       <div className="products-table border">
-        <DataTable
-          keyField="id"
-          columns={columns}
-          data={data.data}
-        />
+        <DataTable keyField="id" columns={columns} data={data.data} />
         <div className="pagination-bar">
           <ReactPaginate
             breakLabel="..."
@@ -273,7 +314,7 @@ function Product() {
             nextLinkClassName="page-num"
             activeLinkClassName="active"
           />
-          <div style={{color: 'white'}}>{totalItems} items</div>
+          <div style={{ color: "white" }}>{totalItems} items</div>
           <select
             className="pagiSelect"
             onChange={(e) => setItemsPerPage(e.target.value)}

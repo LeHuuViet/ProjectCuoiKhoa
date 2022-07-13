@@ -86,7 +86,7 @@ function SideNavigationMenu() {
           <AccordionPanel pb={4}>
             <ul className="sidebar-items">
               <li>
-                <Link to="/pages/products/manage-product">
+                <Link to="/pages/products">
                   Products
                 </Link>
               </li>
@@ -138,7 +138,7 @@ function SideNavigationMenu() {
           <AccordionPanel pb={4}>
             <ul className="sidebar-items">
               <li>
-                <Link to="/pages/products/manage-users">
+                <Link to="/pages/users">
                   User lists
                 </Link>
               </li>

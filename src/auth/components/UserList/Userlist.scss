@@ -78,6 +78,60 @@
   .userlist-table {
     margin-top: 40px;
   }
+  .pagination {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    gap: 5px;
+    background-color: #323259;
+    height: auto;
+    padding: 30px;
+  }
+
+  .pagination a {
+    text-decoration: none;
+    color: white;
+    border: 1px solid black;
+  }
+
+  .pagination .page-num {
+    padding: 8px 15px;
+    cursor: pointer;
+    background-repeat: 3px;
+    font-weight: 400;
+  }
+
+  .pagination li a {
+    padding: 8px 15px;
+    cursor: pointer;
+    background-repeat: 3px;
+    font-weight: 400;
+  }
+
+  .pagination .page-num:hover {
+    background: #b18aff;
+    color: white;
+  }
+
+  .pagination .active {
+    background: #b18aff;
+    color: white;
+  }
+
+  .pagination-bar {
+    display: flex;
+    align-items: center;
+    background-color: var(--background-color);
+  }
+
+  .pagination-bar .pagiSelect {
+    color: white;
+    background: #b18aff;
+    margin: 0 10px;
+    border: 1px;
+    padding: 3px 10px;
+  }
   ul {
     margin: 0;
     list-style: none;

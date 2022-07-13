@@ -2,16 +2,18 @@ import "./UserList.scss";
 import DataTable from "react-data-table-component";
 import { useEffect, useState } from "react";
 import moment from "moment";
+import ReactPaginate from "react-paginate";
 
 function UserList() {
   const [data, setData] = useState([]);
-<<<<<<< HEAD
-  const [totalItems, setTotalItems] = useState(0)
-=======
+  const [totalItems, setTotalItems] = useState(0);
   const [checkAll, setCheckAll] = useState([false]);
->>>>>>> cbbdacf124d08c0e2b7a41d72a64ae2c25eeef68
-  useEffect(() => {
-    const datas = fetch(
+  const [page, setPage] = useState(1);
+  const [pageCount, setPageCount] = useState(+0);
+  const [itemsPerPage, setItemsPerPage] = useState(25);
+
+  const fetchAllUserList = async () => {
+    const datas = await fetch(
       "https://api.gearfocus.div4.pgtest.co/apiAdmin/users/list",
       {
         method: "POST",
@@ -20,31 +22,39 @@ function UserList() {
             "9.5a8eefea2a1299f87e8e1a74994827840debf897a605c603444091fa519da275",
         },
         body: JSON.stringify({
-          "page":1,
-          "count":25,
-          "search":"",
-          "memberships":[
-          ],
-          "types":[
-          ],
-          "status":[
-          ],
-          "country":"",
-          "state":"",
-          "address":"",
-          "phone":"",
-          "date_type":"R",
-          "date_range":[
-          ],
-          "sort":"last_login",
-          "order_by":"DESC",
-          "tz":7
-         })
+          page: page,
+          count: itemsPerPage,
+          search: "",
+          memberships: [],
+          types: [],
+          status: [],
+          country: "",
+          state: "",
+          address: "",
+          phone: "",
+          date_type: "R",
+          date_range: [],
+          sort: "last_login",
+          order_by: "DESC",
+          tz: 7,
+        }),
       }
     )
       .then((response) => response.json())
       .then((data) => setData(data));
-  }, []);
+    setTotalItems(data.recordsFiltered);
+
+    const itemOffSet = data.recordsFiltered / itemsPerPage;
+    setPageCount(Math.round(itemOffSet));
+  };
+
+  useEffect(() => {
+    fetchAllUserList();
+  }, [page, itemsPerPage]);
+
+  const handleChangePage = (e) => {
+    setPage(e.selected + 1);
+  };
 
   const handleCheckAll = () => {
     var checkboxes = document.getElementsByName("checkbox");
@@ -232,12 +242,36 @@ function UserList() {
         <button className="userlist-button">Add User</button>
       </div>
       <div className="userlist-table">
-        <DataTable
-          keyField="id"
-          columns={columns}
-          data={data.data}
-          pagination={true}
-        />
+        <DataTable keyField="id" columns={columns} data={data.data} />
+        <div className="pagination-bar">
+          <ReactPaginate
+            breakLabel="..."
+            nextLabel=">>"
+            onPageChange={handleChangePage}
+            pageRangeDisplayed={2}
+            marginPagesDisplayed={2}
+            pageCount={pageCount}
+            previousLabel="<<"
+            renderOnZeroPageCount={null}
+            containerClassName="pagination"
+            pageLinkClassName="page-num"
+            previousLinkClassName="page-num"
+            nextLinkClassName="page-num"
+            activeLinkClassName="active"
+          />
+          <div style={{ color: "white" }}>{totalItems} items</div>
+          <select
+            className="pagiSelect"
+            onChange={(e) => setItemsPerPage(e.target.value)}
+            defaultValue={10}
+          >
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="75">75</option>
+            <option value="100">100</option>
+          </select>
+        </div>
       </div>
     </div>
   );
