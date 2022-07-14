@@ -3,54 +3,96 @@ import DataTable from "react-data-table-component";
 import { useEffect, useState } from "react";
 import moment from "moment";
 import ReactPaginate from "react-paginate";
+import axios from "axios";
+import { userListColumns } from "./UserList.utils";
+import { getUserList } from "../../service/userlist";
 
 function UserList() {
+  const initData = {
+    search: "",
+    memberships: [],
+    types: [],
+    status: [],
+    country: "",
+    states: "",
+    address: "",
+    phone: "",
+  };
+
   const [data, setData] = useState([]);
   const [totalItems, setTotalItems] = useState(0);
   const [checkAll, setCheckAll] = useState([false]);
   const [page, setPage] = useState(1);
-  const [pageCount, setPageCount] = useState(+0);
-  const [itemsPerPage, setItemsPerPage] = useState(25);
+  const [totalPages, setTotalPages] = useState(25);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [address, setAddress] = useState("");
+  const [country, setCountry] = useState("");
+  const [dateRange, setDateRange] = useState([]);
+  const [memberships, setMemberships] = useState([]);
+  const [phone, setPhone] = useState("");
+  const [search, setSearch] = useState("");
+  const [states, setStates] = useState("");
+  const [status, setStatus] = useState([]);
+  const [types, setTypes] = useState([]);
+  const [state, setState] = useState(initData);
+  const [dateType, setDateType] = useState("");
 
-  const fetchAllUserList = async () => {
-    const datas = await fetch(
-      "https://api.gearfocus.div4.pgtest.co/apiAdmin/users/list",
-      {
-        method: "POST",
-        headers: {
-          Authorization:
-            "9.5a8eefea2a1299f87e8e1a74994827840debf897a605c603444091fa519da275",
-        },
-        body: JSON.stringify({
-          page: page,
-          count: itemsPerPage,
-          search: "",
-          memberships: [],
-          types: [],
-          status: [],
-          country: "",
-          state: "",
-          address: "",
-          phone: "",
-          date_type: "R",
-          date_range: [],
-          sort: "last_login",
-          order_by: "DESC",
-          tz: 7,
-        }),
-      }
-    )
-      .then((response) => response.json())
-      .then((data) => setData(data));
+  const axiosAllUserList = async () => {
+    const [
+      search,
+      memberships,
+      types,
+      status,
+      country,
+      states,
+      address,
+      phone,
+      pageCount,
+    ] = state;
+    const [data, error] = await getUserList({
+      page,
+      count: pageCount,
+      search,
+      memberships,
+      types,
+      status,
+      country,
+      states,
+      address,
+      phone,
+      date_type: dateType,
+      date_range: dateRange,
+      sort: "last-login",
+      order_by: "DESC",
+      tz: "7",
+    });
+    console.log("@@", data);
+    setData(data.data);
     setTotalItems(data.recordsFiltered);
-
     const itemOffSet = data.recordsFiltered / itemsPerPage;
-    setPageCount(Math.round(itemOffSet));
+    setTotalPages(Math.round(itemOffSet));
   };
 
   useEffect(() => {
-    fetchAllUserList();
-  }, [page, itemsPerPage]);
+    axiosAllUserList();
+  }, [
+    state.search,
+    state.country,
+    state.states,
+    state.address,
+    state.phone,
+    state.memberships,
+    state.types,
+    state.status,
+    page,
+    state.pageCount,
+  ]);
+
+  const onPerPageChange = (value) => {
+    setItemsPerPage(value);
+    setState((state) => ({ ...state, pageCount: +value }));
+    setPage(1);
+  };
 
   const handleChangePage = (e) => {
     setPage(e.selected + 1);
@@ -72,87 +114,11 @@ function UserList() {
     setCheckAll(true);
   };
 
-  const handleCheckAndUnCheck = (checkAll) => {
+  const handleCheckAndUnCheck = () => {
     if (checkAll === true) handleCheckAll();
     else handleUnCheckAll();
   };
 
-  const columns = [
-    {
-      name: (
-        <input
-          type={"checkbox"}
-          name="checkbox"
-          onClick={() => {
-            handleCheckAndUnCheck(checkAll);
-          }}
-        />
-      ),
-      selector: (row) => <input name="checkbox" type={"checkbox"} />,
-      width: "50px",
-    },
-    {
-      name: "Login/Email",
-      selector: (row) => (
-        <div className="d-flex" style={{ flexDirection: "column" }}>
-          <a href="" style={{ color: "#007bff" }}>
-            {row.vendor}
-          </a>
-          <label>{row.storeName}</label>
-        </div>
-      ),
-      width: "300px",
-      sortable: true,
-    },
-    {
-      name: "Name",
-      selector: (row) => {
-        if (row.fistName == null && row.lastName == null) return "";
-        else return row.fistName + " " + row.lastName;
-      },
-      width: "200px",
-      sortable: true,
-    },
-
-    {
-      name: "Access Level",
-      selector: (row) => row.access_level,
-      width: "150px",
-      sortable: true,
-    },
-    {
-      name: "Products",
-      selector: (row) => row.product,
-    },
-    {
-      name: "Orders",
-      selector: (row) => row.order.order_as_buyer,
-    },
-    {
-      name: "Created",
-      selector: (row) =>
-        moment.unix(Number.parseInt(row.created)).format("lll"),
-      width: "200px",
-      sortable: true,
-    },
-    {
-      name: "Last Login",
-      selector: (row) =>
-        moment.unix(Number.parseInt(row.last_login)).format("lll"),
-      width: "200px",
-      sortable: true,
-    },
-    {
-      name: "",
-      selector: (row) => (
-        <button className="userlist-delete">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-            <path d="M135.2 17.69C140.6 6.848 151.7 0 163.8 0H284.2C296.3 0 307.4 6.848 312.8 17.69L320 32H416C433.7 32 448 46.33 448 64C448 81.67 433.7 96 416 96H32C14.33 96 0 81.67 0 64C0 46.33 14.33 32 32 32H128L135.2 17.69zM394.8 466.1C393.2 492.3 372.3 512 346.9 512H101.1C75.75 512 54.77 492.3 53.19 466.1L31.1 128H416L394.8 466.1z" />
-          </svg>
-        </button>
-      ),
-    },
-  ];
   return (
     <div className="UserList">
       <div style={{ marginBottom: "40px" }}>
@@ -242,7 +208,11 @@ function UserList() {
         <button className="userlist-button">Add User</button>
       </div>
       <div className="userlist-table">
-        <DataTable keyField="id" columns={columns} data={data.data} />
+        <DataTable
+          keyField="id"
+          columns={userListColumns(handleCheckAndUnCheck)}
+          data={data}
+        />
         <div className="pagination-bar">
           <ReactPaginate
             breakLabel="..."
@@ -250,7 +220,7 @@ function UserList() {
             onPageChange={handleChangePage}
             pageRangeDisplayed={2}
             marginPagesDisplayed={2}
-            pageCount={pageCount}
+            pageCount={totalPages}
             previousLabel="<<"
             renderOnZeroPageCount={null}
             containerClassName="pagination"
@@ -262,8 +232,8 @@ function UserList() {
           <div style={{ color: "white" }}>{totalItems} items</div>
           <select
             className="pagiSelect"
-            onChange={(e) => setItemsPerPage(e.target.value)}
-            defaultValue={10}
+            onChange={(e) => onPerPageChange(e.target.value)}
+            defaultValue={25}
           >
             <option value="10">10</option>
             <option value="25">25</option>
