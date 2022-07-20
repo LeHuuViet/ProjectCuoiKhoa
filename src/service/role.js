@@ -1,8 +1,9 @@
 import { API } from "./api";
 
-export const getCategory = async ({}) => {
+export const getRole = async () => {
   try {
-    const result = await API.get("/api/categories/list", {});
+    const result = await API.get("/apiAdmin/commons/role", {
+    });
     return [result.data, null];
   } catch (error) {
     return [null, error];

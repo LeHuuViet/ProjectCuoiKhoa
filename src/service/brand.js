@@ -1,10 +1,11 @@
 import { API } from "./api";
 
-export const getCategory = async ({}) => {
+export const getBrand = async ({}) => {
   try {
-    const result = await API.get("/api/categories/list", {});
+    const result = await API.get("/apiAdmin/brands/list", {});
     return [result.data, null];
   } catch (error) {
     return [null, error];
   }
 };
+

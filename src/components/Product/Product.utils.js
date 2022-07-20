@@ -1,11 +1,12 @@
 import moment from "moment/moment";
+import { Link } from "react-router-dom";
 
 export const productColumns = (handleCheckAndUnCheck) => [
   {
     name: (
-      <input name="checkbox" type="checkbox" onClick={handleCheckAndUnCheck} />
+      <input style={{ cursor: "pointer" }} name="checkbox" type="checkbox" onClick={handleCheckAndUnCheck} />
     ),
-    selector: (row) => <input name="checkbox" type={"checkbox"} />,
+    selector: (row) => <input style={{ cursor: "pointer" }} name="checkbox" type={"checkbox"} />,
     width: "50px",
   },
   {
@@ -17,9 +18,11 @@ export const productColumns = (handleCheckAndUnCheck) => [
   {
     name: "Name",
     selector: (row) => (
-      <a href="" style={{ color: "#007bff" }}>
+      <Link to={`/pages/products/products-detail/${row.id}`}>
+      <a href="#" style={{ color: "#007bff" }}>
         {row.name}
       </a>
+      </Link>
     ),
     width: "300px",
 
@@ -32,14 +35,14 @@ export const productColumns = (handleCheckAndUnCheck) => [
   },
   {
     name: "Price",
-    selector: (row) => <input value={row.price} />,
+    selector: (row) => <input value={row.price} style={{color: 'black'}} />,
     width: "150px",
 
     sortable: true,
   },
   {
     name: "Instock",
-    selector: (row) => <input value={row.amount} />,
+    selector: (row) => <input value={row.amount} style={{color: 'black'}} />,
     width: "150px",
     sortable: true,
   },

@@ -1,31 +1,47 @@
-.AddProduct {
+.ViewDetailUser {
   width: 100%;
-  .form-addproduct {
+  .form-viewuser {
     svg {
       fill: #dc3545;
       width: 6px;
       margin-left: 4px;
     }
   }
-  .form-addproduct-title {
+  .form-viewuser-title {
     line-height: 2.5rem;
     font-size: 2rem;
     color: #fff;
-    font-weight: 400;
     margin-bottom: 3rem;
     margin-top: 10px;
     font-weight: 600;
   }
-  .form-addproduct-list {
+  .form-viewuser-list {
     flex-flow: row wrap;
     margin-bottom: 24px;
   }
-  .form-addproduct-label {
+  .form-viewuser-label {
     text-align: end;
-    width: 150px;
+    width: 300px;
     padding: 4px 10px;
     margin-bottom: 8px;
-    margin-right: 16px;
+    height: 40px;
+  }
+  .form-span-viewuser {
+    height: 40px;
+    border-radius: 0.25rem;
+    font-size: 0.9375rem;
+    line-height: 1.5rem;
+    padding: 0.4375rem 1rem;
+    color: white;
+    margin-left: 16px;
+  }
+  .form-a-viewuser {
+    height: 40px;
+    border-radius: 0.25rem;
+    font-size: 0.9375rem;
+    line-height: 1.5rem;
+    padding: 0.4375rem 1rem;
+    margin-left: 16px;
   }
   .form-input-and-select {
     width: 400px;
@@ -37,6 +53,7 @@
     line-height: 1.5rem;
     padding: 0.4375rem 1rem;
     color: white;
+    margin-left: 16px;
   }
   .seperated-space {
     display: block;
@@ -56,7 +73,7 @@
     padding: 0;
     margin: 0;
   }
-  .button-back {
+  button {
     height: 28px;
     border: 1px;
     padding: 6px;
@@ -116,59 +133,4 @@
   .sticky-panel-button:hover {
     color: black;
   }
-  div#multiselectContainerReact {
-    width: 400px;
-  }
-  input#search_input {
-    width: 100%;
-    color: white;
-    padding-left: 10px;
-  }
-  .search-wrapper.searchWrapper {
-    min-height: 40px;
-    background-color: #252547;
-    border: 1px solid #13132b;
-    border-radius: 0.25rem;
-  }
-  .rdw-editor-toolbar {
-    color: black;
-    background-color: white;
-  }
-  .rdw-editor-main {
-    border: 1px solid;
-    height: auto;
-    min-height: 200px;
-    background-color: white;
-  }
-  .rdw-editor-wrapper {
-    width: 600px;
-  }
-  .rdw-dropdown-wrapper.rdw-list-dropdown {
-    display: none;
-  }
-  .rdw-dropdown-wrapper.rdw-text-align-dropdown {
-    display: none;
-  }
-  textarea {
-    width: 600px;
-  }
-  .ant-select-selector {
-    background-color: #252547 !important;
-    border: 1px solid #13132b !important;
-    color: white !important;
-  }
-  .ant-select-selection-overflow span.ant-select-selection-item {
-    background-color: #b18aff!important;
-  }
-  .css-x19aeh-control {
-    background-color: #252547;
-}
-.css-b62m3t-container {
-  width: 400px;
-}
-.css-qc6sy-singleValue {
-  color: black;
-}
-
-
 }

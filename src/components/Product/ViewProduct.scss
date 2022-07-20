@@ -158,17 +158,25 @@
     color: white !important;
   }
   .ant-select-selection-overflow span.ant-select-selection-item {
-    background-color: #b18aff!important;
+    background-color: #b18aff !important;
   }
   .css-x19aeh-control {
     background-color: #252547;
-}
-.css-b62m3t-container {
-  width: 400px;
-}
-.css-qc6sy-singleValue {
-  color: black;
-}
-
-
+  }
+  .css-b62m3t-container {
+    width: 400px;
+  }
+  .css-qc6sy-singleValue {
+    color: black;
+  }
+  .image-wrapper {
+    width: 1000px;
+      img {
+        object-fit: cover;
+        width: 140px;
+        height: 140px;
+        margin-right: 10px;
+        margin-bottom: 10px;
+      }
+  }
 }

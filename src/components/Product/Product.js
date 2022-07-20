@@ -5,9 +5,11 @@ import ReactPaginate from "react-paginate";
 import "./Product.scss";
 import { Link } from "react-router-dom";
 import { getProducts } from "../../service/product";
+import { getVendor } from "../../service/vendor";
 import { productColumns } from "./Product.utils";
 import Vendor from "../Vendor/Vendor";
 import { getCategory } from "../../service/categorylist";
+import { Select } from "antd";
 
 const Product = () => {
   const initData = {
@@ -17,12 +19,13 @@ const Product = () => {
     searchIn: "",
     availability: "",
     pageCount: 25,
-    vendor: ''
+    vendor: "",
   };
 
   const [checkAll, setCheckAll] = useState(false);
   const [data, setData] = useState([]);
   const [categoryList, setCategoryList] = useState([]);
+  const [vendorList, setVendorList] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(25);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -31,7 +34,9 @@ const Product = () => {
   const [category, setCategory] = useState("0");
   const [stockStatus, setStockStatus] = useState("all");
   const [availability, setAvailability] = useState("all");
-  const [vendor, setVendor] = useState('')
+  const [vendor, setVendor] = useState("");
+  const [productDelete, setProductDelete] = useState([])
+  const [productDeleteLength, setProductDeleteLength] = useState(0)
   const [checked, setChecked] = useState({
     name: false,
     sku: false,
@@ -40,8 +45,15 @@ const Product = () => {
   const [state, setState] = useState(initData);
 
   const axiosAllProducts = async () => {
-    const { search, category, stockStatus, availability, searchIn, pageCount, vendor } =
-      state;
+    const {
+      search,
+      category,
+      stockStatus,
+      availability,
+      searchIn,
+      pageCount,
+      vendor,
+    } = state;
     const [data, error] = await getProducts({
       page,
       count: pageCount,
@@ -49,14 +61,16 @@ const Product = () => {
       category,
       stock_status: stockStatus,
       availability,
-      vendor,
+      vendor: vendor,
       sort: "name",
       order_by: "ASC",
       search_type: searchIn,
     });
     const [categoryList, error2] = await getCategory({});
+    const [vendorList, error3] = await getVendor({});
     setData(data.data);
     setCategoryList(categoryList.data);
+    setVendorList(vendorList.data);
     setTotalItems(data.recordsFiltered);
     const itemOffSet = data.recordsFiltered / itemsPerPage;
     setTotalPages(Math.round(itemOffSet));
@@ -72,7 +86,7 @@ const Product = () => {
     state.availability,
     page,
     state.pageCount,
-    state.vendor
+    state.vendor,
   ]);
 
   const handleChangePage = (e) => {
@@ -132,9 +146,11 @@ const Product = () => {
     }));
   };
 
-  const handleDeleteProduct = () => {
-    
-  }
+  const handleDeleteProduct = (items) => {
+    for (const id of items) {
+      document.getElementById({id}).className = ''
+    }
+  };
 
   return (
     <div className="Products">
@@ -201,10 +217,7 @@ const Product = () => {
               </li>
               <li style={{ width: "5%", marginRight: "20px" }}>
                 <div>
-                  <button
-                    type="submit"
-                    className="products-search-button"
-                  >
+                  <button type="submit" className="products-search-button">
                     Search
                   </button>
                 </div>
@@ -261,7 +274,29 @@ const Product = () => {
                   <option value="0">Only disabled</option>
                 </select>
               </li>
-              <Vendor onChange={(e) => setVendor(e.target.value)}/>
+              <Select
+                style={{ width: "300px" }}
+                showSearch
+                placeholder="Type vendor name to select"
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  option.children.toLowerCase().includes(input.toLowerCase())
+                }
+              >
+                {vendorList &&
+                  vendorList.length > 0 &&
+                  vendorList.map((item) => {
+                    return (
+                      <Select.Option
+                        value={item.id}
+                        key={item.id}
+                        onSelect={e => setVendor(e.target.value)}
+                      >
+                        {item.name}
+                      </Select.Option>
+                    );
+                  })}
+              </Select>
             </ul>
           </form>
         </div>
@@ -305,6 +340,14 @@ const Product = () => {
             <option value="75">75</option>
             <option value="100">100</option>
           </select>
+        </div>
+      </div>
+      <div className="sticky-panel">
+        <div>
+          <div>
+            <button className="sticky-panel-button">Save changes</button>
+            <button className="sticky-panel-button">Export all: CSV</button>
+          </div>
         </div>
       </div>
     </div>

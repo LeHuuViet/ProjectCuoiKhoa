@@ -1,32 +1,36 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import "./AddProduct.scss";
+import "./ViewProduct.scss";
 import { getBrand } from "../../service/brand";
 import { getCategory } from "../../service/categorylist";
 import { getCountry } from "../../service/country";
 import AsyncSelect from "react-select/async";
-import {
-  Select,
-  Switch,
-  DatePicker,
-} from "antd";
+import { Select, Switch, DatePicker } from "antd";
 import "antd/dist/antd.min.css";
 import { Editor } from "react-draft-wysiwyg";
-import { EditorState, convertToRaw } from "draft-js";
+import {
+  EditorState,
+  convertToRaw,
+  ContentState,
+  convertFromHTML,
+} from "draft-js";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import draftToHtml from "draftjs-to-html";
 import { getVendor } from "../../service/vendor";
-import { addProducts } from "../../service/addproducts";
 import axios from "axios";
 import moment from "moment";
 import ImageUpLoad from "../../UploadImage";
 
-const AddProduct = () => {
+const ViewProduct = (props) => {
+  let currentUrl = window.location.pathname;
+  let result = currentUrl.lastIndexOf("/");
+  let idProduct = currentUrl.slice(result + 1, currentUrl.length);
   const Today = new Date().toLocaleString("fr-CA", {
     month: "numeric",
     day: "numeric",
     year: "numeric",
   });
+  const [id, setId] = useState("");
   const initSKU = new Date().getTime();
   const [vendorId, setVendorId] = useState("");
   const [productTitle, setProductTitle] = useState("");
@@ -34,7 +38,7 @@ const AddProduct = () => {
   const [conditionId, setConditionId] = useState("292");
   const [categories, setCategories] = useState([]);
   const [description, setDescription] = useState("");
-  const [enabled, setEnabled] = useState("0");
+  const [enabled, setEnabled] = useState("");
   const [memberships, setMemberships] = useState([]);
   const [ShippingToZones, setShippingToZones] = useState([
     { id: 1, price: "0.00" },
@@ -66,65 +70,6 @@ const AddProduct = () => {
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const maxNumber = 10;
 
-  const addNewProduct = async () => {
-    const form = new FormData();
-    form.append(
-      "productDetail",
-      `{"vendor_id": "${vendorId}",
-      "name": "${productTitle}",
-      "brand_id": "${brandId}",
-      "condition_id": "${conditionId}",
-      "categories": "${categories}",
-      "description": "${description}",
-      "enabled": "${enabled}",
-      "memberships": "${Array.from(new Select(memberships))}",
-      "shipping_to_zones": "${JSON.stringify(ShippingToZones)}",
-      "tax_exempt": "${taxExempt}",
-      "price": "${price}",
-      "sale_price_type": "$",
-      "arrival_date": "${arrivalDate}",
-      "inventory_tracking": "${inventoryTracking}",
-      "quantity": "${quantity}",
-      "sku": "${sku}",
-      "participate_sale":"${participateSale}",
-      "sale_price": "${salePrice}",
-      "og_tags_type": "${ogTagsType}",
-      "og_tags": "${ogTags}",
-      "meta_desc_type": "${metaDescType}",
-      "meta_description": "${metaDesc}",
-      "meta_keywords": "${metaKeywords}",
-      "product_page_title": "${productPageTitle}",
-      "facebook_marketing_enabled": "${fbMarketingEnabled}",
-      "google_feed_enabled": "${ggFeedEnabled}",
-      "imagesOrder": "[]",
-      "deleted_images": [],}`
-    );
-    // const [data, error] = await addProducts(form);
-    const res = await axios.post(
-      "https://api.gearfocus.div4.pgtest.co/apiAdmin/products/create",
-      form,
-      {
-        headers: {
-          Authorization:
-            "9.5a8eefea2a1299f87e8e1a74994827840debf897a605c603444091fa519da275",
-        },
-      }
-    );
-
-    const [categoryList, error2] = await getCategory({});
-    const [countryList, error3] = await getCountry({});
-    const [vendorList, error4] = await getVendor({});
-    const [brandList, error5] = await getBrand({});
-    setBrandList(brandList.data);
-    setCategoryList(categoryList.data);
-    setCountryList(countryList.data);
-    setVendorList(vendorList.data);
-  };
-  
-  useEffect(() => {
-    addNewProduct();
-  }, []);
-
   const loadVendor = async (inputText, callback) => {
     const res = await axios.post(
       "https://api.gearfocus.div4.pgtest.co/apiAdmin/vendors/list",
@@ -140,7 +85,68 @@ const AddProduct = () => {
     callback(data.map((i) => ({ id: i.id, name: i.name })));
   };
 
-  
+  const getProductDetail = async () => {
+    //const res = await axios.post
+
+    const res = await axios.post(
+      "https://api.gearfocus.div4.pgtest.co/apiAdmin/products/detail",
+      `{"id":"${idProduct}"}`,
+      {
+        headers: {
+          Authorization:
+            "9.5a8eefea2a1299f87e8e1a74994827840debf897a605c603444091fa519da275",
+        },
+      }
+    );
+    setId(res.data.data.id);
+    setVendorId(res.data.data.vendor_id);
+    setProductTitle(res.data.data.name);
+    setConditionId(res.data.data.condition_id);
+    setBrandId(res.data.data.brand_id);
+    setEditorState(
+      EditorState.createWithContent(
+        ContentState.createFromBlockArray(
+          convertFromHTML(res.data.data.description)
+        )
+      )
+    );
+    setSku(res.data.data.sku);
+    console.log(images.map((item) => item.file.toString()));
+    setImages(res.data.data.images);
+    setCategories(res.data.data.categories);
+    setArrivalDate(res.data.data.arrival_date);
+    setEnabled(Number(res.data.data.enabled));
+    setPrice(res.data.data.price);
+    setQuantity(res.data.data.quantity);
+    setShippingToZones(res.data.data.shipping);
+    setOgTagsType(res.data.data.og_tags_type);
+    setOgTags(res.data.data.og_tags);
+    setMetaDescType(res.data.data.meta_desc_type);
+    setMetaDesc(res.data.data.meta_description);
+    setMetaKeywords(res.data.data.meta_keywords);
+    setProductPageTitle(res.data.data.product_page_title);
+    setFbMarketingEnabled(+res.data.data.facebook_marketing_enabled);
+    setGgFeedEnabled(+res.data.data.google_feed_enabled);
+    // setInputVendor(res)
+    setCategoryList(categoryList);
+    setCountryList(countryList);
+    setVendorList(vendorList);
+    setBrandList(brandList);
+    const [categoryList, error2] = await getCategory({});
+    const [countryList, error3] = await getCountry({});
+    const [vendorList, error4] = await getVendor({});
+    const [brandList, error5] = await getBrand({});
+  };
+
+  useEffect(() => {
+    getProductDetail();
+  }, []);
+
+  const decimalNumber = (num, n) => {
+    const index = String(num).indexOf(".", 0);
+    const result = String(num).slice(0, index + n + 1);
+    return result;
+  };
 
   return (
     <div className="AddProduct">
@@ -157,7 +163,7 @@ const AddProduct = () => {
         <form className="form-addproduct">
           <div className="form-addproduct-part1">
             <div>
-              <h2 className="form-addproduct-title">Add Product</h2>
+              <h2 className="form-addproduct-title">{productTitle}</h2>
             </div>
             <div>
               <ul>
@@ -180,7 +186,7 @@ const AddProduct = () => {
                     loadOptions={loadVendor}
                     onChange={(e) => setSelectVendor(e)}
                     onInputChange={(e) => setInputVendor(e)}
-                    placeholder={"Type Vendor name to select"}
+                    placeholder={inputVendor}
                     theme={(theme) => ({
                       ...theme,
                       borderRadius: 0,
@@ -202,8 +208,10 @@ const AddProduct = () => {
                     </svg>
                   </label>
                   <input
+                    type={"text"}
+                    defaultValue={productTitle}
                     className="form-input-and-select"
-                    onChange={(e) => setProductTitle(e.target.value)}
+                    onChange={(e) => productTitle(e.target.value)}
                   />
                 </li>
                 <li className="d-flex form-addproduct-list">
@@ -217,6 +225,8 @@ const AddProduct = () => {
                     </svg>
                   </label>
                   <select
+                    defaultValue={brandId}
+                    value={brandId}
                     className="form-input-and-select"
                     onChange={(e) => setBrandId(e.target.value)}
                   >
@@ -242,6 +252,7 @@ const AddProduct = () => {
                     </svg>
                   </label>
                   <select
+                    defaultValue={conditionId}
                     className="form-input-and-select"
                     onChange={(e) => setConditionId(e.target.value)}
                   >
@@ -251,8 +262,8 @@ const AddProduct = () => {
                 <li className="d-flex form-addproduct-list">
                   <label className="form-addproduct-label">SKU</label>
                   <input
+                    value={sku}
                     className="form-input-and-select"
-                    defaultValue={initSKU}
                     onChange={(e) => setSku(e.target.value)}
                   />
                 </li>
@@ -266,8 +277,16 @@ const AddProduct = () => {
                       <path d="M417.1 368c-5.937 10.27-16.69 16-27.75 16c-5.422 0-10.92-1.375-15.97-4.281L256 311.4V448c0 17.67-14.33 32-31.1 32S192 465.7 192 448V311.4l-118.3 68.29C68.67 382.6 63.17 384 57.75 384c-11.06 0-21.81-5.734-27.75-16c-8.828-15.31-3.594-34.88 11.72-43.72L159.1 256L41.72 187.7C26.41 178.9 21.17 159.3 29.1 144C36.63 132.5 49.26 126.7 61.65 128.2C65.78 128.7 69.88 130.1 73.72 132.3L192 200.6V64c0-17.67 14.33-32 32-32S256 46.33 256 64v136.6l118.3-68.29c3.838-2.213 7.939-3.539 12.07-4.051C398.7 126.7 411.4 132.5 417.1 144c8.828 15.31 3.594 34.88-11.72 43.72L288 256l118.3 68.28C421.6 333.1 426.8 352.7 417.1 368z" />
                     </svg>
                   </label>
-
-                  <ImageUpLoad setIma={setImages} Ima={images} />
+                  <div className="image-wrapper">
+                    {images.map((img) => (
+                      <img
+                        style={{ width: "140px" }}
+                        src={img.file}
+                        key={img.id}
+                      />
+                    ))}
+                  </div>
+                  {/* <ImageUpLoad setIma={setImages} Ima={images} /> */}
                 </li>
                 <li className="d-flex form-addproduct-list">
                   <label className="form-addproduct-label">
@@ -284,6 +303,9 @@ const AddProduct = () => {
                     placeholder="Type Categories name to select"
                     style={{ width: "600px", minHeight: "40px" }}
                     onSelect={setCategories}
+                    defaultValue={categories.map((item) =>
+                      "".concat(item.name)
+                    )}
                   >
                     {categoryList &&
                       categoryList.length > 0 &&
@@ -341,6 +363,7 @@ const AddProduct = () => {
                     style={{ marginTop: "6px" }}
                     checkedChildren={"Yes"}
                     unCheckedChildren={"No"}
+                    defaultChecked={0}
                     onChange={(e) => setEnabled(Number(e.target.checked))}
                   />
                 </li>
@@ -353,7 +376,11 @@ const AddProduct = () => {
             <ul>
               <li className="d-flex form-addproduct-list">
                 <label className="form-addproduct-label">Memberships</label>
-                <select defaultValue={""} className="form-input-and-select">
+                <select
+                  defaultChecked={memberships}
+                  defaultValue={""}
+                  className="form-input-and-select"
+                >
                   <option></option>
                   <option>General</option>
                 </select>
@@ -369,6 +396,7 @@ const AddProduct = () => {
                     <input
                       type="checkbox"
                       onSelect={(e) => setTaxExempt(e.target.checked)}
+                      defaultChecked={Number(taxExempt)}
                     />
                     <label>Tax Exempt</label>
                   </div>
@@ -386,12 +414,17 @@ const AddProduct = () => {
                   type={"number"}
                   className="form-input-and-select"
                   onChange={(e) => setPrice(e.target.value)}
+                  value={decimalNumber(price, 2)}
                 />
               </li>
               <li className="d-flex form-addproduct-list">
                 <label className="form-addproduct-label">Arrival date</label>
                 <DatePicker
                   defaultValue={moment(new Date().toLocaleDateString())}
+                  value={moment(
+                    new Date(arrivalDate * 1000).toLocaleDateString()
+                  )}
+                  format={"YYYY-MM-DD"}
                   onChange={(e) =>
                     setArrivalDate(
                       new Date(e._d).toLocaleDateString("fr-CA", {
@@ -411,6 +444,7 @@ const AddProduct = () => {
                   </svg>
                 </label>
                 <input
+                  value={quantity}
                   className="form-input-and-select"
                   onChange={(e) => setQuantity(e.target.value)}
                 />
@@ -430,6 +464,10 @@ const AddProduct = () => {
                   </svg>
                 </label>
                 <input
+                  defaultValue={decimalNumber(
+                    ShippingToZones.filter((item) => item.id === "1")[0]?.price,
+                    2
+                  )}
                   type="number"
                   className="form-input-and-select"
                   onChange={(e) =>
@@ -485,6 +523,7 @@ const AddProduct = () => {
                 <select
                   className="form-input-and-select"
                   onChange={(e) => setOgTagsType(e.target.value)}
+                  defaultValue={ogTagsType}
                 >
                   <option value="0">Autogenerated</option>
                   <option value="1">Custom</option>
@@ -497,6 +536,7 @@ const AddProduct = () => {
                 <select
                   className="form-input-and-select"
                   onChange={(e) => setMetaDescType()}
+                  defaultValue={metaDescType}
                 >
                   <option value="A">Autogenerated</option>
                   <option value="C">Custom</option>
@@ -507,6 +547,7 @@ const AddProduct = () => {
                 <input
                   className="form-input-and-select"
                   onChange={(e) => setMetaKeywords(e.target.value)}
+                  defaultValue={metaKeywords}
                 />
               </li>
               <li className="d-flex form-addproduct-list">
@@ -516,6 +557,7 @@ const AddProduct = () => {
                 <input
                   className="form-input-and-select"
                   onChange={(e) => setProductPageTitle(e.target.value)}
+                  defaultValue={productPageTitle}
                 />
               </li>
               <div>
@@ -529,6 +571,7 @@ const AddProduct = () => {
                   style={{ marginTop: "16px" }}
                   checkedChildren={"Yes"}
                   unCheckedChildren={"No"}
+                  defaultChecked={fbMarketingEnabled}
                   onChange={(e) =>
                     setFbMarketingEnabled(Number(e.target.checked))
                   }
@@ -540,6 +583,7 @@ const AddProduct = () => {
                 </label>
                 <Switch
                   style={{ marginTop: "16px" }}
+                  defaultChecked={ggFeedEnabled}
                   checkedChildren={"Yes"}
                   unCheckedChildren={"No"}
                   onChange={(e) => setGgFeedEnabled(Number(e.target.checked))}
@@ -552,9 +596,7 @@ const AddProduct = () => {
       <div className="sticky-panel">
         <div>
           <div>
-            <button className="sticky-panel-button" onClick={addNewProduct}>
-              Add product
-            </button>
+            <button className="sticky-panel-button">Update</button>
           </div>
         </div>
       </div>
@@ -562,4 +604,4 @@ const AddProduct = () => {
   );
 };
 
-export default AddProduct;
+export default ViewProduct;
