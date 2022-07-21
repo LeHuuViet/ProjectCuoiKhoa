@@ -100,6 +100,7 @@ const ViewProduct = (props) => {
     );
     setId(res.data.data.id);
     setVendorId(res.data.data.vendor_id);
+    getSelectedVendor(res.data.data.vendor_id);
     setProductTitle(res.data.data.name);
     setConditionId(res.data.data.condition_id);
     setBrandId(res.data.data.brand_id);
@@ -128,19 +129,22 @@ const ViewProduct = (props) => {
     setFbMarketingEnabled(+res.data.data.facebook_marketing_enabled);
     setGgFeedEnabled(+res.data.data.google_feed_enabled);
     // setInputVendor(res)
-    setCategoryList(categoryList);
-    setCountryList(countryList);
-    setVendorList(vendorList);
-    setBrandList(brandList);
-    const [categoryList, error2] = await getCategory({});
-    const [countryList, error3] = await getCountry({});
-    const [vendorList, error4] = await getVendor({});
-    const [brandList, error5] = await getBrand({});
+
+    getBrand().then(([response, error]) => setBrandList(response.data));
+    getCountry().then(([response, error]) => setCountryList(response.data));
+    getVendor().then(([response, error]) => setVendorList(response.data));
+    getCategory().then(([response, error]) => setCategoryList(response.data));
   };
 
   useEffect(() => {
     getProductDetail();
   }, []);
+
+  const getSelectedVendor = async (id) => {
+    const [{ data: vendors }, error] = await getVendor();
+    const selected = vendors.find((item) => item.id === id);
+    setSelectVendor(selected);
+  };
 
   const decimalNumber = (num, n) => {
     const index = String(num).indexOf(".", 0);
@@ -300,10 +304,9 @@ const ViewProduct = (props) => {
                   </label>
                   <Select
                     mode="tags"
-                    placeholder="Type Categories name to select"
                     style={{ width: "600px", minHeight: "40px" }}
                     onSelect={setCategories}
-                    defaultValue={categories.map((item) =>
+                    value={categories.map((item) =>
                       "".concat(item.name)
                     )}
                   >
@@ -363,7 +366,7 @@ const ViewProduct = (props) => {
                     style={{ marginTop: "6px" }}
                     checkedChildren={"Yes"}
                     unCheckedChildren={"No"}
-                    defaultChecked={0}
+                    checked={!!enabled}
                     onChange={(e) => setEnabled(Number(e.target.checked))}
                   />
                 </li>
@@ -571,7 +574,7 @@ const ViewProduct = (props) => {
                   style={{ marginTop: "16px" }}
                   checkedChildren={"Yes"}
                   unCheckedChildren={"No"}
-                  defaultChecked={fbMarketingEnabled}
+                  checked={!!fbMarketingEnabled}
                   onChange={(e) =>
                     setFbMarketingEnabled(Number(e.target.checked))
                   }
@@ -583,7 +586,7 @@ const ViewProduct = (props) => {
                 </label>
                 <Switch
                   style={{ marginTop: "16px" }}
-                  defaultChecked={ggFeedEnabled}
+                  checked={!!ggFeedEnabled}
                   checkedChildren={"Yes"}
                   unCheckedChildren={"No"}
                   onChange={(e) => setGgFeedEnabled(Number(e.target.checked))}

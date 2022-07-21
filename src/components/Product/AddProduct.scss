@@ -166,8 +166,15 @@
 .css-b62m3t-container {
   width: 400px;
 }
-.css-qc6sy-singleValue {
-  color: black;
+.image-wrapper {
+  width: 1000px;
+    img {
+      object-fit: cover;
+      width: 140px;
+      height: 140px;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
 }
 
 
